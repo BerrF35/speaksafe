@@ -14,8 +14,7 @@ SpeakSafe analyzes audio files using acoustic feature extraction and a trained M
 - ⚠️ **AI Generated** — synthesized by a TTS system
 - ⚡ **AI + Human Hybrid** — spliced or dubbed content
 
-Detection covers 20+ AI voice generators including ElevenLabs, OpenAI TTS, Google WaveNet, Azure Neural, ByteDance, iFlytek, and more.
-
+Trained on a dataset containing samples from multiple modern neural TTS systems.
 ---
 
 ## Features
@@ -76,7 +75,7 @@ speaksafe/
 
 ## Quick Start
 
-### Frontend only (demo mode)
+### Frontend demo mode (limited functionality without backend)
 
 Just open `frontend/index.html` in any browser. No server needed — the UI runs in full demo mode showing realistic results.
 
