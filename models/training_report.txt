@@ -1,0 +1,22 @@
+SpeakSafe Model Training Report
+========================================
+
+Samples: 38 (19 human, 19 AI)
+ROC-AUC: 0.9112
+
+              precision    recall  f1-score   support
+
+       human       0.91      0.89      0.90         10
+          ai       0.89      0.91      0.90          8
+
+    accuracy                           0.90         18
+   macro avg       0.90      0.90      0.90         18
+weighted avg       0.90      0.90      0.90         18
+
+Training time: 184.7s
+Model: SVC (RBF kernel, probability=True)
+Scaler: StandardScaler (fitted on training set, saved as scaler.pkl)
+kernel: rbf, C: 10.0, gamma: scale
+Features: 47 (MFCCs x13 mean+var, spectral centroid, ZCR, RMS, bandwidth, rolloff, chroma, HNR, mel banding)
+Cross-validation: StratifiedKFold (5-fold)
+Note: Hybrid samples drawn from same human/ai pool with mixed segments

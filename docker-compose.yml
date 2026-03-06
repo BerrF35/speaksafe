@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models:ro
+    environment:
+      - SPEAKSAFE_ENV=production
+    restart: unless-stopped
+
+  # Uncomment to serve frontend via nginx
+  # frontend:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./frontend:/usr/share/nginx/html:ro
+  #   depends_on:
+  #     - backend

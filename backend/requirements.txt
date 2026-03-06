@@ -1,0 +1,25 @@
+# SpeakSafe – Python dependencies
+# Install: pip install -r requirements.txt
+
+# ── API Framework ───────────────────────────────────────────────
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9      # required for file uploads in FastAPI
+
+# ── Audio Processing ─────────────────────────────────────────────
+librosa==0.10.1
+soundfile==0.12.1
+numpy==1.26.4
+scipy==1.13.0
+
+# ── ML / Inference ───────────────────────────────────────────────
+scikit-learn==1.4.2
+joblib==1.4.0
+
+# ── Utilities ────────────────────────────────────────────────────
+pydantic==2.6.4
+python-dotenv==1.0.1
+
+# ── Dev / Testing ─────────────────────────────────────────────────
+pytest==8.1.1
+httpx==0.27.0                # async test client for FastAPI

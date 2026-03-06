@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+dist/
+build/
+
+# Env
+.env
+
+# Models (large binary files — use Git LFS or store separately)
+models/*.pkl
+models/*.joblib
+models/*.h5
+models/*.pt
+
+# Data (audio files — too large for git)
+data/human/*.wav
+data/human/*.mp3
+data/ai/*.wav
+data/ai/*.mp3
+data/hybrid/*.wav
+data/hybrid/*.mp3
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage

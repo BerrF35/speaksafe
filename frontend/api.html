@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeakSafe – API Reference</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+
+    <nav class="nav">
+      <a class="logo" href="index.html">
+        <div class="logo-icon">◎</div>
+        <div class="logo-text">Speak<span>Safe</span></div>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="how-it-works.html">How It Works</a>
+        <a class="nav-link" href="api.html" style="color:var(--accent)">API</a>
+        <a class="nav-cta" href="index.html">← Analyze Audio</a>
+      </div>
+    </nav>
+
+    <div class="api-page">
+
+      <div style="animation: fadeDown 0.5s ease both; margin-bottom: 48px;">
+        <div class="section-label">Developer Reference</div>
+        <h1 class="section-title">SpeakSafe REST API</h1>
+        <p class="section-sub">Integrate AI voice detection into your platform. The SpeakSafe API is available to approved developers. <a href="index.html#api-access" style="color:var(--accent);">Request access →</a></p>
+
+        <div style="display:flex; gap:16px; margin-top:24px; flex-wrap:wrap;">
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 20px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Base URL</div>
+            <div style="font-family:var(--font-mono); color:var(--accent); font-size:13px;">https://api.speaksafe.io/v1</div>
+          </div>
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 20px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Auth</div>
+            <div style="font-family:var(--font-mono); color:var(--text); font-size:13px;">Bearer token (header)</div>
+          </div>
+          <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 20px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Rate limit</div>
+            <div style="font-family:var(--font-mono); color:var(--text); font-size:13px;">60 req / min (free tier)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- POST /analyze -->
+      <div class="api-section" style="animation: fadeUp 0.5s ease both 0.1s;">
+        <div class="api-section-title">
+          <span class="api-badge post">POST</span>
+          /analyze
+        </div>
+        <p style="color:var(--muted); font-size:13px; margin-bottom:20px; line-height:1.7;">
+          Submit an audio file for AI detection analysis. Returns a job ID for async result polling.
+        </p>
+
+        <div class="endpoint-url">POST https://api.speaksafe.io/v1/analyze</div>
+
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Request parameters</div>
+        <table class="param-table">
+          <thead>
+            <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="param-name">file</td><td class="param-type">multipart/form-data</td><td class="param-desc">Audio file. Supported: WAV, MP3, OGG, FLAC, M4A, WebM. Max 25 MB.</td></tr>
+            <tr><td class="param-name">segment_analysis</td><td class="param-type">boolean</td><td class="param-desc">Optional. If true, returns per-segment scores for hybrid detection. Default: false.</td></tr>
+            <tr><td class="param-name">include_spectrogram</td><td class="param-type">boolean</td><td class="param-desc">Optional. If true, returns a base64 PNG spectrogram in the result. Default: false.</td></tr>
+          </tbody>
+        </table>
+
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Example – cURL</div>
+        <div class="code-block">
+<span class="kw">curl</span> -X POST https://api.speaksafe.io/v1/analyze \<br>
+&nbsp;&nbsp;-H <span class="str">"Authorization: Bearer YOUR_API_KEY"</span> \<br>
+&nbsp;&nbsp;-F <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d6b0bfbab3eb96a5b7bba6bab3f8bba6e5">[email&#160;protected]</a>"</span> \<br>
+&nbsp;&nbsp;-F <span class="str">"segment_analysis=true"</span>
+        </div>
+
+        <div class="code-tabs">
+          <button class="code-tab active" onclick="showTab(this,'py')">Python</button>
+          <button class="code-tab" onclick="showTab(this,'js')">JavaScript</button>
+        </div>
+        <div id="tab-py" class="code-block" style="border-radius:0 6px 6px 6px;">
+<span class="kw">import</span> requests<br><br>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"sample.mp3"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;resp = requests.<span class="fn">post</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"https://api.speaksafe.io/v1/analyze"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;headers={<span class="str">"Authorization"</span>: <span class="str">"Bearer YOUR_API_KEY"</span>},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;files={<span class="str">"file"</span>: f},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data={<span class="str">"segment_analysis"</span>: <span class="str">"true"</span>}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+job = resp.<span class="fn">json</span>()<br>
+<span class="fn">print</span>(job[<span class="str">"job_id"</span>]) <span class="cmt"># e.g. "a1b2c3d4-e5f6-..."</span>
+        </div>
+        <div id="tab-js" class="code-block" style="display:none;border-radius:0 6px 6px 6px;">
+<span class="kw">const</span> form = <span class="kw">new</span> <span class="fn">FormData</span>();<br>
+form.<span class="fn">append</span>(<span class="str">"file"</span>, audioFile); <span class="cmt">// File object</span><br>
+form.<span class="fn">append</span>(<span class="str">"segment_analysis"</span>, <span class="str">"true"</span>);<br><br>
+<span class="kw">const</span> resp = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"https://api.speaksafe.io/v1/analyze"</span>, {<br>
+&nbsp;&nbsp;method: <span class="str">"POST"</span>,<br>
+&nbsp;&nbsp;headers: { <span class="str">"Authorization"</span>: <span class="str">"Bearer YOUR_API_KEY"</span> },<br>
+&nbsp;&nbsp;body: form<br>
+});<br>
+<span class="kw">const</span> { job_id } = <span class="kw">await</span> resp.<span class="fn">json</span>();
+        </div>
+
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;margin-top:20px;">Response (202 Accepted)</div>
+        <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="str">"job_id"</span>: <span class="str">"a1b2c3d4-e5f6-7890-abcd-ef1234567890"</span>,<br>
+&nbsp;&nbsp;<span class="str">"status"</span>: <span class="str">"processing"</span>,<br>
+&nbsp;&nbsp;<span class="str">"estimated_seconds"</span>: <span class="num">2.4</span><br>
+}
+        </div>
+      </div>
+
+      <!-- GET /results -->
+      <div class="api-section" style="animation: fadeUp 0.5s ease both 0.2s;">
+        <div class="api-section-title">
+          <span class="api-badge get">GET</span>
+          /results/{job_id}
+        </div>
+        <p style="color:var(--muted); font-size:13px; margin-bottom:20px; line-height:1.7;">
+          Poll for analysis results. Returns 202 while processing, 200 with full result payload once complete.
+        </p>
+
+        <div class="endpoint-url">GET https://api.speaksafe.io/v1/results/{job_id}</div>
+
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Response (200 OK)</div>
+        <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="str">"job_id"</span>: <span class="str">"a1b2c3d4-..."</span>,<br>
+&nbsp;&nbsp;<span class="str">"status"</span>: <span class="str">"complete"</span>,<br>
+&nbsp;&nbsp;<span class="str">"ai_probability"</span>: <span class="num">0.87</span>,<br>
+&nbsp;&nbsp;<span class="str">"classification"</span>: <span class="str">"AI Generated Voice"</span>,<br>
+&nbsp;&nbsp;<span class="str">"likely_model"</span>: <span class="str">"ElevenLabs (high confidence)"</span>,<br>
+&nbsp;&nbsp;<span class="str">"signal_scores"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"mfcc_variance_regularity"</span>: <span class="num">0.91</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"spectral_centroid_stability"</span>: <span class="num">0.85</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"zcr_regularity"</span>: <span class="num">0.79</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"harmonic_dominance"</span>: <span class="num">0.88</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"rms_uniformity"</span>: <span class="num">0.93</span><br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;<span class="str">"explanation"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"MFCC variance is unusually low — typical of neural TTS output."</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"Spectral banding artifacts detected in mid-frequency range."</span><br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span class="str">"processed_at"</span>: <span class="str">"2025-03-06T14:23:07Z"</span><br>
+}
+        </div>
+      </div>
+
+      <!-- Rate limits -->
+      <div class="api-section" style="animation: fadeUp 0.5s ease both 0.3s;">
+        <div class="api-section-title">Rate Limits &amp; Plans</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Free</div>
+            <div style="font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px;">$0</div>
+            <div style="color:var(--muted);font-size:12px;margin-bottom:16px;">/ month</div>
+            <div style="color:var(--text);font-size:12px;line-height:2;">60 requests / min<br>500 requests / day<br>Max 5 MB per file<br>No segment analysis</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--accent); border-radius:var(--radius-lg); padding:24px; position:relative;">
+            <div style="position:absolute;top:-10px;left:20px;background:var(--accent);color:#0d0e11;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:100px;font-weight:700;">Popular</div>
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Pro</div>
+            <div style="font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px;">$49</div>
+            <div style="color:var(--muted);font-size:12px;margin-bottom:16px;">/ month</div>
+            <div style="color:var(--text);font-size:12px;line-height:2;">300 requests / min<br>10,000 requests / day<br>Max 25 MB per file<br>Segment + spectrogram</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Enterprise</div>
+            <div style="font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px;">Custom</div>
+            <div style="color:var(--muted);font-size:12px;margin-bottom:16px;">contact us</div>
+            <div style="color:var(--text);font-size:12px;line-height:2;">Unlimited rate<br>SLA guarantee<br>On-prem deployment<br>Custom model training</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /api-page -->
+
+    <footer class="footer">
+      <div class="footer-logo">Speak<span>Safe</span></div>
+      <div class="footer-copy">© 2025 SpeakSafe. For research &amp; trust-safety use.</div>
+      <div class="footer-links">
+        <a class="footer-link" href="index.html">Home</a>
+        <a class="footer-link" href="how-it-works.html">How It Works</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    function showTab(btn, id) {
+      document.querySelectorAll(".code-tab").forEach(b => b.classList.remove("active"));
+     
