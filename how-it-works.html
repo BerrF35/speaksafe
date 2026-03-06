@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeakSafe – How It Works</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+
+    <nav class="nav">
+      <a class="logo" href="index.html">
+        <div class="logo-icon">◎</div>
+        <div class="logo-text">Speak<span>Safe</span></div>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="how-it-works.html" style="color:var(--accent)">How It Works</a>
+        <a class="nav-link" href="api.html">API</a>
+        <a class="nav-cta" href="index.html">← Analyze Audio</a>
+      </div>
+    </nav>
+
+    <div class="hiw-page">
+      <div style="animation: fadeDown 0.5s ease both;">
+        <div class="section-label">Documentation</div>
+        <h1 class="section-title">How SpeakSafe Works</h1>
+        <p class="section-sub">A step-by-step breakdown of the acoustic forensics pipeline that powers SpeakSafe's detection.</p>
+      </div>
+
+      <!-- Steps -->
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num-wrap">
+            <div class="step-num">1</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">Audio Ingestion &amp; Preprocessing</div>
+            <div class="step-desc">
+              Your audio file is decoded into a raw PCM waveform and normalized to 16 kHz mono. We strip any container metadata (ID3 tags, comments) before processing. Files are never stored — they are processed in-memory and discarded after analysis.
+            </div>
+            <div class="step-tags">
+              <span class="step-tag">16 kHz resample</span>
+              <span class="step-tag">PCM decode</span>
+              <span class="step-tag">Mono normalize</span>
+              <span class="step-tag">WAV · MP3 · OGG · FLAC · M4A</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap">
+            <div class="step-num">2</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">Acoustic Feature Extraction</div>
+            <div class="step-desc">
+              We compute 12 acoustic features across 25ms analysis windows with 10ms hop size. The key features include Mel-Frequency Cepstral Coefficients (MFCCs), spectral centroid, zero-crossing rate, short-time energy, harmonic-to-noise ratio, and RMS uniformity. Each feature is measured for both its mean value and variance over time, because AI voices tend to be unnaturally consistent.
+            </div>
+            <div class="step-tags">
+              <span class="step-tag">MFCC (13 coefficients)</span>
+              <span class="step-tag">Spectral centroid</span>
+              <span class="step-tag">ZCR</span>
+              <span class="step-tag">HNR</span>
+              <span class="step-tag">RMS energy</span>
+              <span class="step-tag">Pitch F0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap">
+            <div class="step-num">3</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">AI Classification Model</div>
+            <div class="step-desc">
+              The extracted feature vectors are fed into a gradient-boosted ensemble trained on over 50,000 audio samples — half human speech, half AI-generated from 20+ TTS systems. The model outputs a probability score (0–100%) representing confidence in AI origin. A secondary model checks for hybrid content by analyzing temporal consistency across segments.
+            </div>
+            <div class="step-tags">
+              <span class="step-tag">Gradient boost ensemble</span>
+              <span class="step-tag">50k+ training samples</span>
+              <span class="step-tag">Segment-level analysis</span>
+              <span class="step-tag">Hybrid detection</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num-wrap">
+            <div class="step-num">4</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">Results &amp; Explanation</div>
+            <div class="step-desc">
+              The result is returned as a structured JSON object with an AI probability score, classification label (Human / AI / Hybrid), likely generator attribution, per-signal breakdown, and natural-language explanations of what the model detected. A visual spectrogram is rendered from the audio showing frequency patterns over time.
+            </div>
+            <div class="step-tags">
+              <span class="step-tag">AI probability %</span>
+              <span class="step-tag">Generator attribution</span>
+              <span class="step-tag">Spectrogram visualization</span>
+              <span class="step-tag">Signal breakdown</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /steps -->
+
+      <!-- Technical features grid -->
+      <div style="margin-top: 64px; animation: fadeUp 0.5s ease both 0.2s;">
+        <div class="section-label">Signal Features</div>
+        <h2 class="section-title" style="font-size:22px;">What We Actually Measure</h2>
+        <p class="section-sub" style="margin-bottom:0;">Human voices are chaotic in specific, measurable ways. AI voices are smooth in ways that betray them.</p>
+      </div>
+
+      <div class="tech-grid" style="animation: fadeUp 0.5s ease both 0.3s;">
+        <div class="tech-card">
+          <div class="tech-card-icon">〰️</div>
+          <div class="tech-card-title">MFCC Variance</div>
+          <div class="tech-card-desc">Human speech has natural micro-variation in cepstral coefficients. AI voices show unnaturally smooth, low-variance MFCC trajectories.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">📊</div>
+          <div class="tech-card-title">Spectral Centroid Drift</div>
+          <div class="tech-card-desc">The center of mass of the frequency spectrum drifts naturally in human speech. AI audio often exhibits predictable, cyclic drift patterns.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">🔄</div>
+          <div class="tech-card-title">ZCR Periodicity</div>
+          <div class="tech-card-desc">Zero-crossing rate — how often the waveform crosses zero — is stochastic in humans. Regular ZCR periodicity is a strong AI marker.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">🎵</div>
+          <div class="tech-card-title">Harmonic Structure</div>
+          <div class="tech-card-desc">AI vocoders often produce overly clean harmonic series. Real voices have natural jitter, shimmer, and slight inharmonicity.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">📉</div>
+          <div class="tech-card-title">RMS Uniformity</div>
+          <div class="tech-card-desc">Root Mean Square energy across time is too uniform in AI audio. Human speech has natural dynamic variation and micro-silences.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">🌊</div>
+          <div class="tech-card-title">Frequency Banding</div>
+          <div class="tech-card-desc">Neural TTS systems leave periodic horizontal artifacts in spectrograms. These frequency bands are a direct fingerprint of the synthesis process.</div>
+        </div>
+      </div>
+
+      <!-- Accuracy note -->
+      <div style="margin-top:48px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px 32px; animation: fadeUp 0.5s ease both 0.4s;">
+        <div class="section-label" style="margin-bottom:8px;">Accuracy &amp; Limitations</div>
+        <p style="color:var(--muted); font-size:13px; line-height:1.8; margin-bottom:12px;">
+          SpeakSafe achieves ~91% accuracy on clean audio from known AI systems. Accuracy decreases for heavily compressed audio (e.g. &lt;64 kbps MP3), audio shorter than 2 seconds, or custom fine-tuned models not in our training set.
+        </p>
+        <p style="color:var(--muted); font-size:13px; line-height:1.8;">
+          This tool is intended as forensic evidence support, not definitive proof. Do not rely solely on SpeakSafe for legal or consequential decisions.
+        </p>
+      </div>
+
+    </div><!-- /hiw-page -->
+
+    <footer class="footer">
+      <div class="footer-logo">Speak<span>Safe</span></div>
+      <div class="footer-copy">© 2025 SpeakSafe. For research &amp; trust-safety use.</div>
+      <div class="footer-links">
+        <a class="footer-link" href="index.html">Home</a>
+        <a class="footer-link" href="api.html">API Docs</a>
+      </div>
+    </footer>
+
+  </main>
+</body>
+</html>

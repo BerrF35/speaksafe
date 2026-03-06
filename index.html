@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeakSafe – AI Audio Detector</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ── Loading Overlay ──────────────────────────────────────── -->
+  <div id="loading-overlay">
+    <div class="waveform">
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+      <div class="waveform-bar"></div><div class="waveform-bar"></div>
+    </div>
+    <div>
+      <div class="loading-title">Analyzing audio…</div>
+      <div class="loading-sub">extracting acoustic features</div>
+    </div>
+  </div>
+
+  <!-- ── Get API Access Modal ─────────────────────────────────── -->
+  <div id="api-modal" class="modal-overlay">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div class="modal-eyebrow">Developer Access</div>
+      <div class="modal-title">Get API Access</div>
+      <div class="modal-sub">Join our waitlist for early access to the SpeakSafe REST API. We'll reach out with credentials and rate limit details.</div>
+      <form id="api-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" placeholder="Jane Smith" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Work Email</label>
+          <input class="form-input" type="email" placeholder="jane@company.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Use Case</label>
+          <select class="form-select">
+            <option value="">Select use case…</option>
+            <option>Content moderation platform</option>
+            <option>Trust & safety team</option>
+            <option>Research / academic</option>
+            <option>Podcast / media production</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expected monthly requests</label>
+          <select class="form-select">
+            <option>&lt; 1,000</option>
+            <option>1,000 – 10,000</option>
+            <option>10,000 – 100,000</option>
+            <option>100,000+</option>
+          </select>
+        </div>
+        <button class="form-submit" type="submit">Request Access →</button>
+      </form>
+      <div id="form-success" class="form-success">
+        <div class="form-success-icon">✦</div>
+        <div class="form-success-title">You're on the list!</div>
+        <div class="form-success-sub">We'll be in touch within 2–3 business days.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Live Detect Overlay ──────────────────────────────────── -->
+  <div id="live-detect-overlay">
+    <div class="ld-panel">
+      <div class="ld-header">
+        <div class="ld-title">Live <span>Detect</span></div>
+        <button class="ld-close" id="ld-close">✕</button>
+      </div>
+
+      <!-- Waveform canvas -->
+      <div class="ld-waveform-wrap">
+        <canvas id="ld-canvas"></canvas>
+      </div>
+
+      <!-- Status row -->
+      <div class="ld-status-row">
+        <div class="ld-status">
+          <div class="ld-status-dot"></div>
+          <span id="ld-status-text">Ready</span>
+        </div>
+        <div class="ld-packet-info" id="ld-packet-info">2s audio packets</div>
+      </div>
+
+      <!-- Detection bar -->
+      <div class="ld-bar-section">
+        <div class="ld-labels">
+          <div class="ld-label-ai">⚠ AI</div>
+          <div class="ld-label-human">Human ✓</div>
+        </div>
+        <div class="ld-bar-track">
+          <div class="ld-bar-fill-ai"  id="ld-bar-ai"    style="width:50%"></div>
+          <div class="ld-bar-fill-human" id="ld-bar-human" style="width:50%"></div>
+          <div class="ld-indicator" id="ld-indicator"></div>
+        </div>
+        <div class="ld-scores">
+          <div>
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">AI Score</div>
+            <div class="ld-score-ai" id="ld-score-ai">50%</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Human Score</div>
+            <div class="ld-score-human" id="ld-score-human">50%</div>
+          </div>
+        </div>
+        <div class="ld-verdict" id="ld-verdict" style="display:none"></div>
+      </div>
+
+      <button class="ld-start-btn" id="ld-start-btn">Start Live Detection</button>
+      <button class="ld-stop-btn"  id="ld-stop-btn">Stop Detection</button>
+    </div>
+  </div>
+
+  <!-- ── Page ──────────────────────────────────────────────────── -->
+  <main class="page">
+
+    <!-- Nav -->
+    <nav class="nav">
+      <a class="logo" href="index.html">
+        <div class="logo-icon">◎</div>
+        <div class="logo-text">Speak<span>Safe</span></div>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="how-it-works.html">How It Works</a>
+        <a class="nav-link" href="api.html">API</a>
+        <button class="nav-cta" id="btn-api-access">Get API Access</button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-eyebrow">AI Voice Forensics</div>
+      <h1 class="hero-title">Detect <span>AI-Generated</span><br/>Speech Instantly</h1>
+      <p class="hero-sub">Upload or record audio and SpeakSafe tells you whether a voice is human, AI-generated, or a hybrid — using deep spectral analysis across 20+ known AI voice systems.</p>
+    </div>
+
+    <!-- Main card -->
+    <div class="card">
+
+      <!-- Upload Zone -->
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="file-input" accept="audio/*" />
+        <span class="upload-icon">🎙</span>
+        <span class="upload-label">Drop audio file here</span>
+        <span class="upload-sub">or click to browse &nbsp;·&nbsp; WAV · MP3 · OGG · FLAC · M4A</span>
+      </div>
+
+      <!-- Selected file -->
+      <div class="file-selected" id="file-selected">
+        <span>📄</span>
+        <span id="file-name"></span>
+      </div>
+
+      <div class="divider">or</div>
+
+      <!-- Record -->
+      <button class="btn-record" id="btn-record">
+        <div class="rec-dot"></div>
+        <span id="record-label">Record from microphone</span>
+      </button>
+
+      <!-- Analyze -->
+      <button class="btn-analyze" id="btn-analyze" disabled>Analyze Audio</button>
+
+      <!-- Live Detect -->
+      <button class="btn-live-detect" id="btn-live-detect">
+        <div class="live-dot"></div>
+        Live Detect
+      </button>
+
+      <div class="error-banner" id="error-banner"></div>
+    </div>
+
+    <!-- Why Use SpeakSafe -->
+    <section class="why-use">
+      <div class="section-label">Why SpeakSafe</div>
+      <h2 class="section-title">Built for the Age of Synthetic Voice</h2>
+      <p class="section-sub">As AI voice cloning becomes indistinguishable from human speech, SpeakSafe gives you the tools to tell them apart.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🔬</span>
+          <div class="feature-title">Deep Spectral Analysis</div>
+          <div class="feature-desc">Analyzes MFCCs, spectral centroid, zero-crossing rate, harmonic-to-noise ratio, and RMS uniformity across the entire audio signal.</div>
+          <div class="feature-stat">12+ features</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🤖</span>
+          <div class="feature-title">20+ AI Systems Covered</div>
+          <div class="feature-desc">Trained to detect voice output from ElevenLabs, OpenAI TTS, Google WaveNet, Azure Neural, ByteDance, iFlytek, and many more.</div>
+          <div class="feature-stat">20+ models</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⚡</span>
+          <div class="feature-title">Real-Time Results</div>
+          <div class="feature-desc">Get a full classification — Human, AI, or Hybrid — with confidence scores and signal breakdown in under 3 seconds.</div>
+          <div class="feature-stat">&lt; 3s latency</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📡</span>
+          <div class="feature-title">Live Voice Detection</div>
+          <div class="feature-desc">Stream your microphone in real time and see a live AI↔Human detection bar updating every 2 seconds as you speak.</div>
+          <div class="feature-stat">2s windows</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Providers -->
+    <section class="providers-section">
+      <div class="section-label">Detection Coverage</div>
+      <h2 class="section-title">Detects Output From 20+ AI Voice Generators</h2>
+      <p class="section-sub">Our model has been trained and validated against voices produced by the following systems.</p>
+
+      <div class="providers-grid">
+        <div class="provider-badge"><div class="provider-icon">O</div>OpenAI TTS</div>
+        <div class="provider-badge"><div class="provider-icon">G</div>Google WaveNet</div>
+        <div class="provider-badge"><div class="provider-icon">E</div>ElevenLabs</div>
+        <div class="provider-badge"><div class="provider-icon">A</div>Amazon Polly</div>
+        <div class="provider-badge"><div class="provider-icon">M</div>Microsoft Azure Neural</div>
+        <div class="provider-badge"><div class="provider-icon">T</div>Tencent TTS</div>
+        <div class="provider-badge"><div class="provider-icon">B</div>Baidu DuerOS</div>
+        <div class="provider-badge"><div class="provider-icon">A</div>Alibaba NLS</div>
+        <div class="provider-badge"><div class="provider-icon">F</div>FishAudio</div>
+        <div class="provider-badge"><div class="provider-icon">S</div>Synthesia</div>
+        <div class="provider-badge"><div class="provider-icon">M</div>Murf.ai</div>
+        <div class="provider-badge"><div class="provider-icon">P</div>PlayHT</div>
+        <div class="provider-badge"><div class="provider-icon">Q</div>Qwen Audio</div>
+        <div class="provider-badge"><div class="provider-icon">M</div>MiniMax Speech</div>
+        <div class="provider-badge"><div class="provider-icon">B</div>ByteDance / TikTok TTS</div>
+        <div class="provider-badge"><div class="provider-icon">I</div>iFlytek</div>
+        <div class="provider-badge"><div class="provider-icon">S</div>Speechify</div>
+        <div class="provider-badge"><div class="provider-icon">R</div>Resemble.ai</div>
+        <div class="provider-badge"><div class="provider-icon">D</div>Descript Overdub</div>
+        <div class="provider-badge"><div class="provider-icon">C</div>Coqui TTS</div>
+        <div class="provider-badge"><div class="provider-icon">X</div>XTTS v2</div>
+        <div class="provider-badge"><div class="provider-icon">S</div>StyleTTS2</div>
+        <div class="provider-badge"><div class="provider-icon">R</div>Replica Studios</div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-logo">Speak<span>Safe</span></div>
+      <div class="footer-copy">© 2025 SpeakSafe. For research &amp; trust-safety use.</div>
+      <div class="footer-links">
+        <a class="footer-link" href="how-it-works.html">How It Works</a>
+        <a class="footer-link" href="api.html">API Docs</a>
+        <button class="footer-link" id="btn-api-access-footer">Get Access</button>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // Footer API access button
+    document.getElementById("btn-api-access-footer").addEventListener("click", () => {
+      document.getElementById("api-modal").classList.add("active");
+    });
+    // Show ld-verdict once started
+    document.getElementById("ld-start-btn").addEventListener("click", () => {
+      setTimeout(() => {
+        const v = document.getElementById("ld-verdict");
+        if (v) v.style.display = "block";
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
